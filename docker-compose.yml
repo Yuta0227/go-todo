@@ -1,0 +1,28 @@
+version: "3"
+services:
+  app:
+    image: cosmtrek/air
+    ports:
+      - "8080:8080"
+    tty: true
+    stdin_open: true
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - PORT=8080
+    command: ["/bin/bash", "-c", "air -c .air.toml"]
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      TZ: Asia/Tokyo
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+      - ./postgres/etc/postgresql/14/main/pg_hba.conf:/etc/postgresql/14/main/pg_hba.conf
