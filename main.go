@@ -10,7 +10,7 @@ import (
 
 func helloHander(c *gin.Context) {
 	c.Writer.Header().Set("Content-Type", "text/html")
-	fmt.Fprintf(c.Writer, "<h1>Hello Japan </h1>")
+	fmt.Fprintf(c.Writer, "<h1>Hello Japaaaaan </h1>")
 	fmt.Fprintf(c.Writer, "<div>avg%f</div>", avg([]int{12, 3, 4, 5}))
 	min, max := minMax([]int{12, 3, 4, 5})
 	fmt.Fprintf(c.Writer, "<div>min%dmax%d</div>", min, max)
