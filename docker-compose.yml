@@ -1,28 +1,27 @@
 version: "3"
 services:
   app:
-    build: .
+    build: ./app
     ports:
       - 8080:8080
     tty: true
     stdin_open: true
-    environment:
-      - PORT=8080
+    env_file:
+      - ./env/app.env
     volumes:
       - type: bind
         source: ./app
         target: /app
   postgres:
-    image: postgres:14
+    build: 
+      dockerfile: ./db/Dockerfile
+      args:
+        - DB_LANG=ja_JP
     container_name: postgres
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-      TZ: Asia/Tokyo
-      PGDATA: /var/lib/postgresql/data/pgdata
+    env_file:
+      - ./env/db.env      
     volumes:
-      - ./postgres:/var/lib/postgresql/data
-      - ./postgres/etc/postgresql/14/main/pg_hba.conf:/etc/postgresql/14/main/pg_hba.conf
+      - ./db:/var/lib/postgresql/data
+      - ./db/etc/postgresql/15/main/pg_hba.conf:/etc/postgresql/15/main/pg_hba.conf

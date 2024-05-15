@@ -1,2 +1,3 @@
-postgres/pgdata
+db/pgdata
 tmp
+env
