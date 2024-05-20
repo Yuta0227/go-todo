@@ -1,3 +1,4 @@
 db/pgdata
 tmp
-env
+env/app.env
+env/db.env
