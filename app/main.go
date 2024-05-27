@@ -4,8 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"strings"
 	"time"
+	"io"
+	"os"
+	"log"
 )
 
 func helloHander(c *gin.Context) {
@@ -85,12 +89,41 @@ func (h Human) introduce() string {
 }
 
 func main() {
-	r := gin.Default()
-	r.ForwardedByClientIP = true
-	r.SetTrustedProxies([]string{"127.0.0.1"})
+	engine := gin.Default()
+	engine.ForwardedByClientIP = true
+	engine.SetTrustedProxies([]string{"127.0.0.1"})
 	dbConnect()
-	r.GET("/", helloHander)
-	r.Run(":8080")
+	engine.LoadHTMLGlob("views/*")
+	engine.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			// htmlに渡す変数を定義
+			"message": "hello gin",
+		})
+	})
+	engine.POST("/upload", func(c *gin.Context) {
+        file,header, err :=  c.Request.FormFile("image")
+        if err != nil {
+            c.String(http.StatusBadRequest, "Bad request")
+            return
+        }
+        fileName := header.Filename
+        dir, _ := os.Getwd()
+        out, err := os.Create(dir+"\\images\\"+fileName)
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer out.Close()
+        _, err = io.Copy(out, file)
+        if err != nil {
+            log.Fatal(err)
+        }
+        c.JSON(http.StatusOK, gin.H{
+            "status": "ok",
+        })
+    })
+	engine.Static("/static", "./static")
+
+	engine.Run(":8080")
 }
 func printNumbers() {
 	for i := 0; i < 10; i++ {
